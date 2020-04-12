@@ -7,12 +7,17 @@ const bodyParser = require('body-parser');
 module.exports = {
     start: (port) => {
         console.log('here');
-        const adminRoutes = require('./routes/admin');
+        const adminRoutes = require('./routes/movies');
         const shopRoutes = require('./routes/shop');
+        const swaggerUi = require('swagger-ui-express'),
+            swaggerDocument = require('./swagger.json');
 
         app.use(db);
 
         app.use(bodyParser.urlencoded({ extended: false }));
+
+        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+        app.use('/api/v1', router);
 
         app.use(logger);
 
