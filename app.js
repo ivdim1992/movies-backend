@@ -6,23 +6,23 @@ const bodyParser = require('body-parser');
 
 module.exports = {
     start: (port) => {
-        console.log('here');
-        const adminRoutes = require('./routes/movies');
-        const shopRoutes = require('./routes/shop');
-        const swaggerUi = require('swagger-ui-express'),
-            swaggerDocument = require('./swagger.json');
+        const moviesRoutes = require('./routes/movies');
+        const userRoutes = require('./routes/user');
+        const swaggerRoutes = require('./routes/swagger');
+
+        const helmet = require('helmet');
+
+        app.use(helmet());
+        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(bodyParser.json());
 
         app.use(db);
+        app.use('/movies', logger);
 
-        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(swaggerRoutes);
 
-        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-        app.use('/api/v1', router);
-
-        app.use(logger);
-
-        app.use('/admin', adminRoutes);
-        app.use(shopRoutes);
+        app.use(moviesRoutes);
+        app.use(userRoutes);
 
         app.use((req, res, next) => {
             res.status(404).send('<h1>Page not found</h1>');
