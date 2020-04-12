@@ -1,9 +1,4 @@
-POST http://localhost:2020/api/movies HTTP/1.1
+GET http://localhost:2020/api/movies HTTP/1.1
 content-type: application/json
 accept: application/json
 authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIiLCJpYXQiOjE1ODY2OTkyMDl9.TyOaG731r2McGrenMMYNB8VM-wQbRd7fyshM5CYTzS8
-
-{
-    "title": "Test Movie",
-    "description": "Test"
-}

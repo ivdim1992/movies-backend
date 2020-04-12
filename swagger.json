@@ -14,7 +14,7 @@
         }
     },
     "host": "localhost:2020",
-    "basePath": "/",
+    "basePath": "/api",
     "tags": [
         {
             "name": "movie",
@@ -36,7 +36,7 @@
     ],
     "schemes": ["http", "https"],
     "paths": {
-        "/movies": {
+        "api/movies": {
             "post": {
                 "tags": ["movie"],
                 "summary": "Add movie to the store",
@@ -51,7 +51,16 @@
                         "description": "Movie Object that will be added to the store",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Movie"
+                            "type": "object",
+                            "required": ["description"],
+                            "properties": {
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 ],
@@ -59,12 +68,7 @@
                     "405": {
                         "description": "Invalid input"
                     }
-                },
-                "security": [
-                    {
-                        "petstore_auth": ["write:pets", "read:pets"]
-                    }
-                ]
+                }
             },
 
             "get": {
@@ -91,7 +95,7 @@
                 }
             }
         },
-        "/movies/{movieId}": {
+        "api/movies/{movieId}": {
             "put": {
                 "tags": ["movie"],
                 "summary": "Update an existing movie",
@@ -147,19 +151,6 @@
                         "description": "The name that needs to be fetched. Use user1 for testing. ",
                         "required": true,
                         "type": "string"
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Status values that need to be considered for filter",
-                        "required": true,
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "enum": ["available", "pending", "sold"],
-                            "default": "available"
-                        },
-                        "collectionFormat": "multi"
                     }
                 ],
                 "responses": {
@@ -207,7 +198,7 @@
                 }
             }
         },
-        "/user": {
+        "api/user": {
             "post": {
                 "tags": ["user"],
                 "summary": "Create user",
@@ -233,55 +224,7 @@
             }
         },
 
-        "/user/login": {
-            "get": {
-                "tags": ["user"],
-                "summary": "Logs user into the system",
-                "description": "",
-                "operationId": "loginUser",
-                "produces": ["application/xml", "application/json"],
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "query",
-                        "description": "The user name for login",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "description": "The password for login in clear text",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "type": "integer",
-                                "format": "int32",
-                                "description": "calls per hour allowed by the user"
-                            },
-                            "X-Expires-After": {
-                                "type": "string",
-                                "format": "date-time",
-                                "description": "date in UTC when token expires"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid username/password supplied"
-                    }
-                }
-            }
-        },
-        "/user/logout": {
+        "api/user/logout": {
             "get": {
                 "tags": ["user"],
                 "summary": "Logs out current logged in user session",
@@ -296,7 +239,7 @@
                 }
             }
         },
-        "/user/{username}": {
+        "api/user/{username}": {
             "get": {
                 "tags": ["user"],
                 "summary": "Get user by user name",
@@ -384,6 +327,77 @@
                     }
                 }
             }
+        },
+        "api/auth/login": {
+            "post": {
+                "tags": ["user"],
+                "summary": "Logs user into the system",
+                "description": "",
+                "produces": ["application/xml", "application/json"],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The user name for login",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "calls per hour allowed by the user"
+                            },
+                            "X-Expires-After": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "date in UTC when token expires"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid username/password supplied"
+                    }
+                }
+            }
+        },
+
+        "/api/auth/verify": {
+            "get": {
+                "tags": ["user"],
+                "summary": "Verify token",
+                "description": "",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "calls per hour allowed by the user"
+                            },
+                            "X-Expires-After": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "date in UTC when token expires"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid username/password supplied"
+                    }
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -447,7 +461,6 @@
                     "type": "integer",
                     "format": "int64"
                 },
-
                 "title": {
                     "type": "string",
                     "example": "Black Swan"
