@@ -6,10 +6,22 @@ const logger = require('./middlewares/logger');
 const db = require('./middlewares/db');
 const auth = require('./middlewares/auth');
 
+const cors = require('cors');
 const moviesRoutes = require('./routes/movies');
 const userRoutes = require('./routes/user');
 const swaggerRoutes = require('./routes/swagger');
 const authRoutes = require('./routes/auth');
+
+var corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+let allowCrossDomain = function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', '*');
+    next();
+};
 
 const app = express();
 
@@ -17,10 +29,13 @@ module.exports = {
     start: ({ host, port, jwtSecret }) => {
         const authMiddleware = auth(jwtSecret);
         app.use(helmet());
+        app.use(cors(corsOptions));
 
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
         app.use(db);
+        app.use(allowCrossDomain);
+
         app.get('/api/auth/verify', authMiddleware, (req, res) => {
             res.status(200);
             res.end();

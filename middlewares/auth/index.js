@@ -2,6 +2,10 @@ const jwt = require('jsonwebtoken');
 
 function auth(jwtSecret) {
     return (req, res, next) => {
+        if (req.originalUrl === '/api/auth/login') {
+            return next();
+        }
+
         const authorizationValue = req.get('authorization');
 
         if (!authorizationValue) {
