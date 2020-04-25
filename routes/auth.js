@@ -1,14 +1,43 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../middlewares/db/models/User');
+const auth = require('../middlewares/auth/index');
 
-const jwt = require('jsonwebtoken');
+router.post('/auth/register', async (req, res, next) => {
+    try {
+        const user = new User(req.body);
+        await user.save();
+        const token = await user.generateAuthToken();
+        res.status(201).send({ user, token });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
 
-module.exports = (jwtSecret) => {
-    router.post('/auth/login', async (req, res, next) => {
-        const token = jwt.sign({ foo: 'bar' }, jwtSecret);
+router.post('/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findByCredentials(email, password);
+        if (!user) {
+            return res
+                .status(401)
+                .send({ error: 'Login failed! Check credentials' });
+        }
+        const token = await user.generateAuthToken();
+        res.send({ user, token });
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
 
-        res.status(200).setHeader('Content-Type', 'application/json');
-        return res.end(JSON.stringify({ token }));
-    });
-    return router;
-};
+router.post('/auth/logout', auth, async (req, res) => {
+    // Log user out of all devices
+    try {
+        req.user.tokens.splice(0, req.user.tokens.length);
+        await req.user.save();
+        res.send();
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+module.exports = router;

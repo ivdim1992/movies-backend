@@ -1,11 +1,10 @@
-module.exports = (mongoose) => {
-    const MovieSchema = new mongoose.Schema(
-        {
-            title: String,
-            description: String,
-        },
-        { collation: { locale: 'en_US', strength: 1 } }
-    );
+const mongoose = require('mongoose');
 
-    mongoose.model('Movie', MovieSchema);
-};
+const MovieSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+});
+
+const Movie = mongoose.model('Movie', MovieSchema);
+
+module.exports = Movie;

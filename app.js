@@ -27,7 +27,6 @@ const app = express();
 
 module.exports = {
     start: ({ host, port, jwtSecret }) => {
-        const authMiddleware = auth(jwtSecret);
         app.use(helmet());
         app.use(cors(corsOptions));
 
@@ -36,15 +35,15 @@ module.exports = {
         app.use(db);
         app.use(allowCrossDomain);
 
-        app.get('/api/auth/verify', authMiddleware, (req, res) => {
-            res.status(200);
-            res.end();
-        });
-        app.use('/api', logger, authMiddleware);
+        // app.get('/api/auth/verify', authMiddleware, (req, res) => {
+        //     res.status(200);
+        //     res.end();
+        // });
+        // app.use('/api', logger, authMiddleware);
 
         app.use(swaggerRoutes);
-
-        app.use('/api', authRoutes(jwtSecret), moviesRoutes, userRoutes);
+        app.use('/api', authRoutes);
+        app.use('/api', moviesRoutes, userRoutes);
 
         app.use((req, res, next) => {
             res.status(404).send('<h1>Page not found</h1>');
