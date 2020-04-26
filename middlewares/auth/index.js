@@ -2,6 +2,14 @@ const jwt = require('jsonwebtoken');
 const User = require('../db/models/User');
 
 const auth = async (req, res, next) => {
+    if (!req.header('Authorization')) {
+        res.status(500)
+            .send({
+                error: 'Not Authorized',
+            })
+            .end();
+    }
+
     const token = req.header('Authorization').replace('Bearer ', '');
     const data = jwt.verify(token, process.env.JWT_SECRET);
 

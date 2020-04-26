@@ -35,15 +35,10 @@ module.exports = {
         app.use(db);
         app.use(allowCrossDomain);
 
-        // app.get('/api/auth/verify', authMiddleware, (req, res) => {
-        //     res.status(200);
-        //     res.end();
-        // });
-        // app.use('/api', logger, authMiddleware);
+        app.use('/api', logger);
 
         app.use(swaggerRoutes);
-        app.use('/api', authRoutes);
-        app.use('/api', moviesRoutes, userRoutes);
+        app.use('/api', authRoutes, moviesRoutes);
 
         app.use((req, res, next) => {
             res.status(404).send('<h1>Page not found</h1>');

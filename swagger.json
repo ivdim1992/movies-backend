@@ -3,7 +3,7 @@
     "info": {
         "description": "This is a sample Movie server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters.",
         "version": "1.0.0",
-        "title": "Swagger Petstore",
+        "title": "Movie Store",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "email": "apiteam@swagger.io"
@@ -131,12 +131,7 @@
                     "405": {
                         "description": "Validation exception"
                     }
-                },
-                "security": [
-                    {
-                        "petstore_auth": ["write:pets", "read:pets"]
-                    }
-                ]
+                }
             },
             "get": {
                 "tags": ["movie"],
@@ -166,12 +161,7 @@
                     "400": {
                         "description": "Invalid status value"
                     }
-                },
-                "security": [
-                    {
-                        "petstore_auth": ["write:pets", "read:pets"]
-                    }
-                ]
+                }
             },
             "delete": {
                 "tags": ["movie"],
@@ -375,53 +365,21 @@
                     }
                 }
             }
-        },
-
-        "api/auth/verify": {
-            "get": {
-                "tags": ["user"],
-                "summary": "Verify token",
-                "description": "",
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "type": "integer",
-                                "format": "int32",
-                                "description": "calls per hour allowed by the user"
-                            },
-                            "X-Expires-After": {
-                                "type": "string",
-                                "format": "date-time",
-                                "description": "date in UTC when token expires"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid username/password supplied"
-                    }
-                }
-            }
         }
     },
     "securityDefinitions": {
-        "petstore_auth": {
-            "type": "oauth2",
-            "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-            "flow": "implicit",
-            "scopes": {
-                "write:pets": "modify pets in your account",
-                "read:pets": "read your pets"
+        "Authorization": "Bearer <token>",
+        "components": {
+            "securitySchemes": {
+                "bearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT"
+                }
             }
         },
-        "api_key": {
-            "type": "apiKey",
-            "name": "api_key",
-            "in": "header"
+        "security": {
+            "bearerAuth": []
         }
     },
     "definitions": {

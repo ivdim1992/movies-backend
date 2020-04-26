@@ -7,30 +7,33 @@ const Movie = require('../middlewares/db/models/Movie');
 router.get('/movies', auth, async (req, res, next) => {
     const movies = await Movie.find({});
 
-    // res.json(movies);
     res.status(200).setHeader('Content-Type', 'application/json');
 
     return res.end(JSON.stringify(movies));
 });
 
 router.post('/movies', auth, async (req, res, next) => {
+    if (!req.body.title || !req.body.description) {
+        res.status(400).send({ error: 'title and description required' }).end;
+    }
+
     const movie = await req.models.Movie.create(req.body);
 
     res.status(201).setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify(movie));
 });
 
-router.get('/movies/:movieId', async (req, res, next) => {
+router.get('/movies/:movieId', auth, async (req, res, next) => {
     const id = new ObjectId(req.params.movieId);
-    const movie = await req.models.Movie.find({ _id: id });
+    const movie = await req.models.Movie.findOne({ _id: id });
 
     res.status(200).setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify(movie));
 });
 
-router.put('/movies/:movieId', async (req, res, next) => {
+router.put('/movies/:movieId', auth, async (req, res, next) => {
     const id = new ObjectId(req.params.movieId);
-    await req.models.Movie.update({ _id: id }, req.body);
+    await req.models.Movie.updateOne({ _id: id }, req.body);
 
     res.status(200).setHeader('Content-Type', 'application/json');
     return res.end(
@@ -38,7 +41,7 @@ router.put('/movies/:movieId', async (req, res, next) => {
     );
 });
 
-router.delete('/movies/:movieId', async (req, res, next) => {
+router.delete('/movies/:movieId', auth, async (req, res, next) => {
     const id = new ObjectId(req.params.movieId);
     await req.models.Movie.deleteOne({ _id: id });
 
