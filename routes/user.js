@@ -2,9 +2,9 @@
 // const router = express.Router();
 // const User = require('../middlewares/db/models/User');
 
-// router.post('/auth/register', async (req, res, next) => {
+// router.get('/users', async (req, res, next) => {
 //     try {
-//         const user = new User(req.body);
+//         const user = await
 //         await user.save();
 //         const token = await user.generateAuthToken(user);
 //         res.status(201).send({ user, token });

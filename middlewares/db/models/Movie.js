@@ -9,6 +9,20 @@ const MovieSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    poster: {
+        type: String,
+        required: true,
+    },
+    year: {
+        type: Number,
+        required: true,
+    },
+    genre: [
+        {
+            type: String,
+            required: true,
+        },
+    ],
 });
 
 const Movie = mongoose.model('Movie', MovieSchema);
